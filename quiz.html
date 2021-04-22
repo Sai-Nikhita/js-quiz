@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+  <style>
+    button{
+  width:500px;
+  height:50px;
+}
+#demo{
+  font-size:150%;
+  text-align:center;
+}
+</style>
+  <p id="dis_ques"></p><br><br>
+  <button type="button" onclick="start()" id="start">START</button>
+  <button type="button" class="mybuttons"
+          id="btn1" style="display:none" onclick="check()"></button>
+  <button type="button" class="mybuttons"
+          id="btn2" style="display:none" onClick="check()"></button>
+  <button type="button" class="mybuttons"
+          id="btn3" style="display:none" onclick="check()"></button>
+  <button type="button" class="mybuttons"
+          id="btn4" style="display:none" onclick="check()"></button>
+  <p id="demo"></p>
+  <script>
+    var questions=new Array(10);
+var x = new Array(10);//options
+var crt_ans=[];
+var count=-1;
+var a;
+var score=0;
+var btns_id=["btn1","btn2","btn3","btn4"];
+var indexx;
+
+for (var i = 0; i < x.length; i++) {
+  x[i] = new Array(4);
+}
+
+function start(){
+  fetch("https://opentdb.com/api.php?amount=10&category=10&difficulty=easy&type=multiple")
+  .then(response => response.json())
+  .then(data => {
+    
+  for(var i=0;i<10;i++)
+  {
+    for(var j=0;j<3;j++)
+    {
+      x[i][j]=data.results[i].incorrect_answers[j];//set of incorrect answers
+    }
+  }
+    for(var k=0;k<10;k++)
+      {
+        questions[k]=data.results[k].question;//set  of questions
+      } 
+    console.log(data);
+    for(var l=0;l<10;l++)
+    {
+      crt_ans[l]=data.results[l].correct_answer;// set of correct answers
+    }
+    console.log(crt_ans);
+    for(var m=0;m<10;m++)
+   {
+    indexx=Math.floor(Math.random() * 4);//putting crt answer in randam indexes
+     x[m].splice(indexx,0,crt_ans[m]);
+   } 
+    console.log(x);
+    fun1();
+    //for displaying question and options
+    //fun();
+    
+  })
+  .catch( error => {
+    console.log(error);
+    console.log("oops");});
+}
+function fun1(){
+ count++; 
+  
+document.getElementById("start").style.display="none";
+  document.getElementById("dis_ques").innerHTML=questions[count];///displaying ques
+  console.log(questions[count]);
+ for(var i=0;i<4;i++)
+ {
+   document.getElementById(btns_id[i]).style.display="block";//to show up buttons
+   document.getElementById(btns_id[i]).innerHTML=x[count][i];//displaying options
+   document.getElementById(btns_id[i]).value=x[count][i];//assigning values to each options
+   
+ }
+}
+function check()
+{
+  var a=event.srcElement.id;
+  console.log(a);
+  var b=document.getElementById(a).value;
+  console.log(b);
+  console.log(crt_ans[count]);
+  if(b==crt_ans[count])
+    {
+      alert("hurray right ans");
+      score+=10;
+      
+    }
+  else
+    {
+      alert("opps wrong ans");
+    }
+  console.log(count);
+  if(count==9)
+    {
+      console.log("over");
+      stopping();
+    }
+  else{
+  fun1();
+  }
+
+}
+function stopping(){
+  document.getElementById("demo").innerHTML="GAME OVER"+"<br>"+"SCORE:"+score;
+   document.getElementById("dis_ques").style.display="none";
+  for(var t=0;t<4;t++)
+    {
+      document.getElementById(btns_id[t]).style.display="none";
+    }
+}
+</script>
+</body>
+</html>
